@@ -9,4 +9,8 @@ function Greeting(props) {
   );
 }
 
+Greeting.defaultProps = {
+  name: '리액트네이티브',
+};
+
 export default Greeting;
