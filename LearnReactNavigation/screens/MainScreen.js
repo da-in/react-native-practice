@@ -1,6 +1,6 @@
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
-import {useNavigation} from '@react-navigation/native';
-import React from 'react';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import React, {useCallback, useEffect} from 'react';
 import {Button, Text, View} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -16,7 +16,15 @@ function OpenDetailButton() {
   );
 }
 
-function HomeScreen({navigation}) {
+function HomeScreen() {
+  useFocusEffect(
+    useCallback(() => {
+      console.log('이 화면을 보고 있어요.');
+      return () => {
+        console.log('다른 화면으로 넘어갔어요.');
+      };
+    }, []),
+  );
   return (
     <View>
       <Text>Home</Text>
