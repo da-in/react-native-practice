@@ -5,18 +5,20 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Tab = createMaterialBottomTabNavigator();
 
+function OpenDetailButton({navigation}) {
+  return (
+    <Button
+      title="Detail 1 열기"
+      onPress={() => navigation.push('Detail', {id: 1})}
+    />
+  );
+}
+
 function HomeScreen({navigation}) {
   return (
     <View>
       <Text>Home</Text>
-      <Button
-        title="Detail 1 열기"
-        onPress={() =>
-          navigation.push('Detail', {
-            id: 1,
-          })
-        }
-      />
+      <OpenDetailButton navigation={navigation} />
     </View>
   );
 }
