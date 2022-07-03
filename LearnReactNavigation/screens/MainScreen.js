@@ -1,11 +1,13 @@
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {Button, Text, View} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Tab = createMaterialBottomTabNavigator();
 
-function OpenDetailButton({navigation}) {
+function OpenDetailButton() {
+  const navigation = useNavigation();
   return (
     <Button
       title="Detail 1 열기"
@@ -18,7 +20,7 @@ function HomeScreen({navigation}) {
   return (
     <View>
       <Text>Home</Text>
-      <OpenDetailButton navigation={navigation} />
+      <OpenDetailButton />
     </View>
   );
 }
