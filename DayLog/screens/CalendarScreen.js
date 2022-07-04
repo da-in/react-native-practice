@@ -1,14 +1,8 @@
-import React, {useContext} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import LogContext from '../contexts/LogContext';
+import React from 'react';
+import {StyleSheet, View} from 'react-native';
 
 function CalendarScreen() {
-  const {text} = useContext(LogContext);
-  return (
-    <View style={styles.block}>
-      <Text style={styles.text}>text: {text}</Text>
-    </View>
-  );
+  return <View style={styles.block} />;
 }
 
 const styles = StyleSheet.create({
