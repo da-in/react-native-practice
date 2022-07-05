@@ -1,6 +1,7 @@
 import {format} from 'date-fns';
 import React, {useContext, useState} from 'react';
 import CalendarView from '../components/CalendarView';
+import FeedList from '../components/FeedList';
 import LogContext from '../contexts/LogContext';
 
 function CalendarScreen() {
@@ -13,11 +14,20 @@ function CalendarScreen() {
     acc[formattedDate] = {marked: true};
     return acc;
   }, {});
+  const filteredLogs = logs.filter(
+    log => format(new Date(log.date), 'yyyy-MM-dd') === selectedDate,
+  );
+
   return (
-    <CalendarView
-      markedDates={markedDates}
-      selectedDate={selectedDate}
-      onSelectDate={setSelectedDate}
+    <FeedList
+      logs={filteredLogs}
+      ListHeaderComponent={
+        <CalendarView
+          markedDates={markedDates}
+          selectedDate={selectedDate}
+          onSelectDate={setSelectedDate}
+        />
+      }
     />
   );
 }
