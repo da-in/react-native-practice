@@ -3,6 +3,7 @@ import {Alert, Keyboard, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import SignButton from '../components/SignButton';
 import SignForm from '../components/SignForm';
+import {useUserContext} from '../contexts/UserContext';
 import {signIn, signUp} from '../lib/auth';
 import {getUser} from '../lib/users';
 
@@ -15,6 +16,7 @@ function SingInScreen({navigation, route}) {
   });
 
   const [loading, setLoading] = useState();
+  const {setUser} = useUserContext();
 
   const createChangeTextHandler = name => value => {
     setForm({...form, [name]: value});
@@ -35,7 +37,7 @@ function SingInScreen({navigation, route}) {
       if (!profile) {
         navigation.navigate('Welcome', {uid: user.uid});
       } else {
-        // 구현 예정
+        setUser(profile);
       }
     } catch (e) {
       const messages = {
