@@ -4,6 +4,7 @@ import SingInScreen from './SignInScreen';
 import WelcomeScreen from './WelcomeScreen';
 import {useUserContext} from '../contexts/UserContext';
 import MainTab from './MainTab';
+import UploadScreen from './UploadScreen';
 import {subscribeAuth} from '../lib/auth';
 import {getUser} from '../lib/users';
 
@@ -34,6 +35,11 @@ function RootStack() {
             name="MainTab"
             component={MainTab}
             options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="Upload"
+            component={UploadScreen}
+            options={{title: '새 게시물', headerBackTitle: '뒤로가기'}}
           />
         </>
       ) : (
