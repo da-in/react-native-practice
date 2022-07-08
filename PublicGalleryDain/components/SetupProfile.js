@@ -1,12 +1,20 @@
 import {useNavigation, useRoute} from '@react-navigation/native';
 import React, {useState} from 'react';
-import {Image, Platform, Pressable, StyleSheet, View} from 'react-native';
+import {
+  Image,
+  Platform,
+  Pressable,
+  StyleSheet,
+  View,
+  ActivityIndicator,
+} from 'react-native';
 import {useUserContext} from '../contexts/UserContext';
 import {signOut} from '../lib/auth';
 import {createUser} from '../lib/users';
 import BorderedInput from './BorderedInput';
 import CustomButton from './CustomButton';
 import {launchImageLibrary} from 'react-native-image-picker';
+import storage from '@react-native-firebase/storage';
 
 function SetupProfile() {
   const [displayName, setDisplayName] = useState();
@@ -17,14 +25,46 @@ function SetupProfile() {
   const {params} = useRoute();
   const {uid} = params || {};
 
-  const onSubmit = () => {
+  const [loading, setLoading] = useState(false);
+
+  const onSubmit = async () => {
+    setLoading(true);
+
+    let photoURL = null;
+
+    if (response) {
+      const asset = response.assets[0];
+      const extension = asset.fileName.split('.').pop(); //확장자 추출
+      const reference = storage().ref(`/profile/${uid}.${extension}`);
+
+      try {
+        if (Platform.OS === 'android') {
+          await reference.putString(asset.base64, 'base64', {
+            contentType: asset.type,
+          });
+        } else {
+          await reference.putFile(asset.uri);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+
+      photoURL = response ? await reference.getDownloadURL() : null;
+    }
+
     const user = {
       id: uid,
       displayName,
-      photoURL: null,
+      photoURL,
     };
+
+    console.log('call createUser');
+    console.log(user);
     createUser(user);
+    console.log('done createUser');
     setUser(user);
+    console.log('done setUser');
+    console.log(user);
   };
 
   const onCancel = () => {
@@ -70,10 +110,14 @@ function SetupProfile() {
           onSubmitEditing={onSubmit}
           returnKeyType="next"
         />
-        <View style={styles.buttons}>
-          <CustomButton title="다음" onPress={onSubmit} hasMarginBottom />
-          <CustomButton title="취소" onPress={onCancel} />
-        </View>
+        {loading ? (
+          <ActivityIndicator size={32} color="#6200ee" style={styles.spinner} />
+        ) : (
+          <View style={styles.buttons}>
+            <CustomButton title="다음" onPress={onSubmit} hasMarginBottom />
+            <CustomButton title="취소" onPress={onCancel} />
+          </View>
+        )}
       </View>
     </View>
   );
