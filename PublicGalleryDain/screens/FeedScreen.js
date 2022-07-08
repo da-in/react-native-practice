@@ -1,11 +1,18 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, FlatList, StyleSheet, View} from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  View,
+} from 'react-native';
 import PostCard from '../components/PostCard';
-import {getOlderPosts, getPosts, PAGE_SIZE} from '../lib/post';
+import {getNewerPosts, getOlderPosts, getPosts, PAGE_SIZE} from '../lib/post';
 
 function FeedScreen() {
   const [posts, setPosts] = useState(null);
   const [noMorePost, setNoMorePost] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     getPosts().then(setPosts);
@@ -23,6 +30,20 @@ function FeedScreen() {
     setPosts(posts.concat(olderPosts));
   };
 
+  const onRefresh = async () => {
+    if (!posts || posts.length === 0 || refreshing) {
+      return;
+    }
+    const firstPost = posts[0];
+    setRefreshing(true);
+    const newerPosts = await getNewerPosts(firstPost.id);
+    setRefreshing(false);
+    if (newerPosts.length === 0) {
+      return;
+    }
+    setPosts(newerPosts.concat(posts));
+  };
+
   return (
     <FlatList
       data={posts}
@@ -35,6 +56,9 @@ function FeedScreen() {
         !noMorePost && (
           <ActivityIndicator style={styles.spinner} size={32} color="#6200ee" />
         )
+      }
+      refreshControl={
+        <RefreshControl onRefresh={onRefresh} refreshing={refreshing} />
       }
     />
   );
