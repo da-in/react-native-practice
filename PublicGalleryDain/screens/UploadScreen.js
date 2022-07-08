@@ -2,14 +2,18 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Animated,
-  Image,
   Keyboard,
+  Platform,
   StyleSheet,
   TextInput,
   useWindowDimensions,
   View,
 } from 'react-native';
 import IconRightButton from '../components/IconRightButton';
+import {useUserContext} from '../contexts/UserContext';
+import storage from '@react-native-firebase/storage';
+import {v4} from 'uuid';
+import {createPost} from '../lib/post';
 
 function UploadScreen() {
   const route = useRoute();
@@ -19,9 +23,25 @@ function UploadScreen() {
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   const [description, setDescription] = useState('');
   const navigation = useNavigation();
-  const onSubmit = useCallback(() => {
-    // TODO: 포스트 작성 로직 구현
-  }, []);
+  const {user} = useUserContext();
+
+  const onSubmit = useCallback(async () => {
+    navigation.pop();
+    const asset = res.assets[0];
+
+    const extension = asset.fileName.split('.').pop();
+    const reference = storage().ref(`/photo/${user.id}/${v4()}.${extension}`);
+    if (Platform.OS === 'android') {
+      await reference.putString(asset.base64, 'base64', {
+        contentType: asset.type,
+      });
+    } else {
+      await reference.putFile(asset.uri);
+    }
+    const photoURL = await reference.getDownloadURL();
+    await createPost({description, photoURL, user});
+    // TODO: 포스트 목록 새로고침
+  }, [res, user, description, navigation]);
 
   useEffect(() => {
     navigation.setOptions({
