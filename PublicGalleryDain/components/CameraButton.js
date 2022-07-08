@@ -1,10 +1,18 @@
 import React, {useState} from 'react';
 import {Platform, Pressable, StyleSheet, View} from 'react-native';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import UploadModeModal from './UploadModeModal';
 
 const TABBAR_HEIGHT = 49;
+
+const imagePickerOption = {
+  mediaType: 'photo',
+  maxWidth: 768,
+  maxHeight: 768,
+  includeBase64: Platform.OS === 'android',
+};
 
 function CameraButton() {
   const insets = useSafeAreaInsets();
@@ -14,6 +22,22 @@ function CameraButton() {
     android: TABBAR_HEIGHT / 2,
     ios: TABBAR_HEIGHT / 2 + insets.bottom - 4,
   });
+
+  const onPickImage = res => {
+    if (res.didCancel || !res) {
+      return;
+    }
+    console.log(res);
+  };
+
+  const onLaunchCamera = () => {
+    launchCamera(imagePickerOption, onPickImage);
+  };
+
+  const onLaunchImageLibrary = () => {
+    launchImageLibrary(imagePickerOption, onPickImage);
+  };
+
   return (
     <>
       <View style={[styles.wrapper, {bottom}]}>
@@ -27,6 +51,8 @@ function CameraButton() {
       <UploadModeModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
+        onLaunchCamera={onLaunchCamera}
+        onLaunchImageLibrary={onLaunchImageLibrary}
       />
     </>
   );
