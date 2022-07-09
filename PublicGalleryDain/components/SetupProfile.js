@@ -59,12 +59,9 @@ function SetupProfile() {
       photoURL,
     };
 
-    console.log('call createUser');
     console.log(user);
     createUser(user);
-    console.log('done createUser');
     setUser(user);
-    console.log('done setUser');
     console.log(user);
   };
 
