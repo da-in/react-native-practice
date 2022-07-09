@@ -1,9 +1,11 @@
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useNavigationState} from '@react-navigation/native';
 import React, {useMemo} from 'react';
 import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import Avatar from './Avatar';
 
 function PostCard({user, photoURL, description, createdAt, id}) {
+  const routeNames = useNavigationState(state => state.routeNames);
+
   const date = useMemo(
     () => (createdAt ? new Date(createdAt._seconds * 1000) : new Date()),
     [createdAt],
@@ -12,10 +14,14 @@ function PostCard({user, photoURL, description, createdAt, id}) {
   const navigation = useNavigation();
 
   const onOpenProfile = () => {
-    navigation.navigate('Profile', {
-      userId: user.id,
-      displayName: user.displayName,
-    });
+    if (routeNames.find(routeName => routeName === 'MyProfile')) {
+      navigation.navigate('MyProfile');
+    } else {
+      navigation.navigate('Profile', {
+        userId: user.id,
+        displayName: user.displayName,
+      });
+    }
   };
 
   return (
