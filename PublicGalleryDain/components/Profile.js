@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   FlatList,
-  Image,
   StyleSheet,
   Text,
   View,
@@ -10,6 +9,7 @@ import {
 import {getUser} from '../lib/users';
 import {getPosts} from '../lib/post';
 import Avatar from './Avatar';
+import PostGridItem from './PostGridItem';
 
 function Profile({userId}) {
   const [user, setUser] = useState(null);
@@ -29,6 +29,9 @@ function Profile({userId}) {
   return (
     <FlatList
       style={styles.block}
+      data={posts}
+      renderItem={renderItem}
+      numColumns={3}
       ListHeaderComponent={
         <View style={styles.userInfo}>
           <Avatar source={user.photoURL && {uri: user.photoURL}} size={128} />
@@ -38,6 +41,8 @@ function Profile({userId}) {
     />
   );
 }
+
+const renderItem = ({item}) => <PostGridItem post={item} />;
 
 const styles = StyleSheet.create({
   spinner: {
