@@ -19,11 +19,15 @@ export async function getPosts({userId, mode, id} = {}) {
     query = query.where('user.id', '==', userId);
   }
   if (id) {
-    const cursorDoc = await postsCollection.doc.apply(id).get();
-    query =
-      mode === 'older'
-        ? query.startAfter(cursorDoc)
-        : query.endBefore(cursorDoc);
+    try {
+      const cursorDoc = await postsCollection.doc(id).get();
+      query =
+        mode === 'older'
+          ? query.startAfter(cursorDoc)
+          : query.endBefore(cursorDoc);
+    } catch (e) {
+      console.error(e);
+    }
   }
   const snapshot = await query.get();
   const posts = snapshot.docs.map(doc => ({
