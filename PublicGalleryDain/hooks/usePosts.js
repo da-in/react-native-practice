@@ -32,6 +32,13 @@ export default function usePosts(userId) {
     setPosts(newerPosts.concat(posts));
   }, [posts, userId, refreshing]);
 
+  const removePost = useCallback(
+    postId => {
+      setPosts(posts.filter(post => post.id !== postId));
+    },
+    [posts],
+  );
+
   useEffect(() => {
     getPosts({userId}).then(_posts => {
       setPosts(_posts);
@@ -47,5 +54,6 @@ export default function usePosts(userId) {
     refreshing,
     onLoadMore,
     onRefresh,
+    removePost,
   };
 }
