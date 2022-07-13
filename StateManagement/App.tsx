@@ -1,6 +1,7 @@
 import {configureStore} from '@reduxjs/toolkit';
 import React from 'react';
 import {Provider} from 'react-redux';
+import AuthApp from './components/AuthApp';
 import rootReducer from './slices';
 
 const store = configureStore({
@@ -8,7 +9,11 @@ const store = configureStore({
 });
 
 function App() {
-  return <Provider store={store}>{}</Provider>;
+  return (
+    <Provider store={store}>
+      <AuthApp />
+    </Provider>
+  );
 }
 
 export default App;
